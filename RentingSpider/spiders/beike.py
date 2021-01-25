@@ -6,7 +6,9 @@ from ..items import RentingspiderItem
 class BeikeSpider(scrapy.Spider):
     name = 'beike'
     allowed_domains = ['ke.com/']
-    start_urls = ['http://sh.zu.ke.com/zufang/pg2/']
+    current_page_no = 1
+    start_urls = ['http://sh.zu.ke.com/zufang/pg1/']
+    page_total_size = -1
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -85,15 +87,26 @@ class BeikeSpider(scrapy.Spider):
 
             yield renting_item
 
-    def _cal_update_time_sortable(self, update_time_str):
+        self.current_page_no += 1
+        if self.page_total_size == -1:
+            self.page_total_size = int(response.xpath(
+                "//div[@class='content__pg']/@data-totalpage").extract_first())
+
+        if self.current_page_no <= self.page_total_size:
+            next_url = 'http://sh.zu.ke.com/zufang/pg{}/'.format(str(self.current_page_no))
+            # 准备抓取下一页数据
+            yield scrapy.Request(url=next_url, callback=self.parse, method="GET", dont_filter=True)
+
+    @staticmethod
+    def _cal_update_time_sortable(update_time_str):
         """
         根据moment格式的字符串展示，转换为一个可排序的字段
         :return: 排序字段、根据时间变化、时间越旧，数字越大
         """
         if update_time_str.find('天前') > 0:
             return 100 + int(update_time_str.split('天前')[0])
-        elif update_time_str.find('月前') > 0:
-            return 1000 + int(update_time_str.split('月前')[0])
+        elif update_time_str.find('个月前') > 0:
+            return 1000 + int(update_time_str.split('个月前')[0])
         elif update_time_str.find('年前') > 0:
             return 10000 + int(update_time_str.split('年前')[0])
         else:

@@ -26,37 +26,53 @@
       <Position>3</Position>
       <DataType>String(0)|12s</DataType>
     </column>
-    <column id="11" parent="6" name="cover">
+    <column id="11" parent="6" name="city_street_full_name">
       <Position>4</Position>
-      <DataType>array(0)|2003s</DataType>
-    </column>
-    <column id="12" parent="6" name="house_type">
-      <Position>5</Position>
       <DataType>String(0)|12s</DataType>
     </column>
-    <column id="13" parent="6" name="platform">
+    <column id="12" parent="6" name="cover">
+      <Position>5</Position>
+      <DataType>array(0)|2003s</DataType>
+    </column>
+    <column id="13" parent="6" name="house_net_url">
       <Position>6</Position>
       <DataType>String(0)|12s</DataType>
     </column>
-    <column id="14" parent="6" name="rent">
+    <column id="14" parent="6" name="house_type">
       <Position>7</Position>
       <DataType>String(0)|12s</DataType>
     </column>
-    <column id="15" parent="6" name="source">
+    <column id="15" parent="6" name="platform">
       <Position>8</Position>
       <DataType>String(0)|12s</DataType>
     </column>
-    <column id="16" parent="6" name="tags">
-      <Position>10</Position>
-      <DataType>list(0)|4999545s</DataType>
+    <column id="16" parent="6" name="rent">
+      <Position>9</Position>
+      <DataType>Integer|4s</DataType>
     </column>
-    <column id="17" parent="6" name="title">
+    <column id="17" parent="6" name="rent_unit">
+      <Position>10</Position>
+      <DataType>String(0)|12s</DataType>
+    </column>
+    <column id="18" parent="6" name="source">
       <Position>11</Position>
       <DataType>String(0)|12s</DataType>
     </column>
-    <column id="18" parent="6" name="updateTime">
-      <Position>12</Position>
+    <column id="19" parent="6" name="tags">
+      <Position>13</Position>
+      <DataType>list(0)|4999545s</DataType>
+    </column>
+    <column id="20" parent="6" name="title">
+      <Position>14</Position>
       <DataType>String(0)|12s</DataType>
+    </column>
+    <column id="21" parent="6" name="update_time">
+      <Position>15</Position>
+      <DataType>String(0)|12s</DataType>
+    </column>
+    <column id="22" parent="6" name="update_time_sortable">
+      <Position>16</Position>
+      <DataType>Integer|4s</DataType>
     </column>
   </database-model>
 </dataSource>
