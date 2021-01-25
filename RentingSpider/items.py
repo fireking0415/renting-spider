@@ -13,6 +13,12 @@ class RentingspiderItem(scrapy.Item):
     title = scrapy.Field()
     # //div/p/a[@class='twoline']
 
+    # 租房信息URL地址
+    house_net_url = scrapy.Field()
+
+    # 小区全路径
+    city_street_full_name = scrapy.Field()
+
     # 一级区域
     area_city_region = scrapy.Field()
     # //div[@class='content__list--item--main']/p[@class='content__list--item--des']
@@ -31,6 +37,9 @@ class RentingspiderItem(scrapy.Item):
     rent = scrapy.Field()
     # //span[@class='content__list--item-price']
 
+    # 租金单位
+    rent_unit = scrapy.Field()
+
     # 房屋户型
     house_type = scrapy.Field()
 
@@ -46,6 +55,16 @@ class RentingspiderItem(scrapy.Item):
     # //p[@class='content__list--item--bottom oneline']
 
     # 更新时间
-    updateTime = scrapy.Field()
+    update_time = scrapy.Field()
+
+    # 更新时间-用于排序,将moment时间展示格式转换为可排序类型
+    """
+    排序方式为：
+    今天-10
+    xx天前-100 + xx
+    xx月前-1000 + xx
+    xx年前-10000 + xx
+    """
+    update_time_sortable = scrapy.Field()
 
     pass

@@ -8,7 +8,11 @@ class BeikeSpider(scrapy.Spider):
     allowed_domains = ['ke.com/']
     start_urls = ['http://sh.zu.ke.com/zufang/pg2/']
 
-    def parse(self, response):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.base_url = 'http://sh.zu.ke.com'
+
+    def parse(self, response, **kwargs):
         renting_item = RentingspiderItem()
         page_result_list = response.xpath("//div[@class='content__list--item']")
         for item in page_result_list:
@@ -20,8 +24,14 @@ class BeikeSpider(scrapy.Spider):
                 title = title.strip()
                 renting_item['title'] = title
 
+            renting_item['house_net_url'] = self.base_url + item.xpath(
+                "./a[@class='content__list--item--aside']/@href").extract_first().strip()
+
             city_info_array = item.xpath(
                 "./div[@class='content__list--item--main']/p[@class='content__list--item--des']/a/text()").extract()
+
+            street_full_name = '-'.join(city_info_array)
+            renting_item['city_street_full_name'] = street_full_name
 
             if len(city_info_array) >= 1:
                 renting_item['area_city_region'] = city_info_array[0]
@@ -34,9 +44,16 @@ class BeikeSpider(scrapy.Spider):
 
             renting_item['cover'] = item.xpath("./a[@class='content__list--item--aside']/img/@src").extract()
 
-            renting_item['rent'] = "" + item.xpath(
-                "./div[@class='content__list--item--main']/span[@class='content__list--item-price']/em/text()").extract_first() + item.xpath(
-                "./div[@class='content__list--item--main']/span[@class='content__list--item-price']/text()").extract_first()
+            rent_str = item.xpath(
+                "./div[@class='content__list--item--main']/span[@class='content__list--item-price']/em/text()").extract_first().strip()
+            rent_str = rent_str.replace(' ', '')
+            if rent_str.find("-") > 0:
+                renting_item['rent'] = int(rent_str.split('-')[1])
+            else:
+                renting_item['rent'] = int(rent_str)
+
+            renting_item['rent_unit'] = item.xpath(
+                "./div[@class='content__list--item--main']/span[@class='content__list--item-price']/text()").extract_first().strip()
 
             desc_array = item.xpath(
                 "./div[@class='content__list--item--main']/p[@class='content__list--item--des']/text()").extract()
@@ -63,6 +80,21 @@ class BeikeSpider(scrapy.Spider):
                 "./div[@class='content__list--item--main']/p[@class='content__list--item--brand oneline']/span[@class='content__list--item--time oneline']/text()").extract()
 
             if len(update_time) >= 1:
-                renting_item['updateTime'] = update_time[0].strip()
+                renting_item['update_time'] = update_time[0].strip()
+                renting_item['update_time_sortable'] = self._cal_update_time_sortable(update_time[0].strip())
 
             yield renting_item
+
+    def _cal_update_time_sortable(self, update_time_str):
+        """
+        根据moment格式的字符串展示，转换为一个可排序的字段
+        :return: 排序字段、根据时间变化、时间越旧，数字越大
+        """
+        if update_time_str.find('天前') > 0:
+            return 100 + int(update_time_str.split('天前')[0])
+        elif update_time_str.find('月前') > 0:
+            return 1000 + int(update_time_str.split('月前')[0])
+        elif update_time_str.find('年前') > 0:
+            return 10000 + int(update_time_str.split('年前')[0])
+        else:
+            return 10
