@@ -19,7 +19,8 @@ class RentingspiderPipeline(object):
         mydb = client['renting']
 
         # 指定用来存贮爬取数据的数据表
-        self.sheet = mydb['tb_multi_renting']
+        # self.sheet = mydb['tb_multi_renting']
+        self.sheet = mydb['tb_multi_renting_sample']
 
     def process_item(self, item, spider):
         data = dict(item)
